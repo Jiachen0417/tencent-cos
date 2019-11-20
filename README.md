@@ -45,7 +45,7 @@ TENCENT_SECRET_KEY=123
 # serverless.yml
 
 myBucket:
-  component: '@serverless/tencent-cos'
+  component: '@tencent-serverless/tencent-cos-beta'
   inputs:
     bucket: my-bucket
     region: ap-guangzhou

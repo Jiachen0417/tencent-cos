@@ -1,5 +1,5 @@
 {
-  "name": "@serverless/tencent-cos",
+  "name": "@tencent-serverless/tencent-cos-beta",
   "description": "Tencent Cloud Object Storage",
   "version": "1.2.7",
   "main": "./serverless.js",
