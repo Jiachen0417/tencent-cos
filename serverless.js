@@ -182,9 +182,6 @@ class TencentCOS extends Component {
           timestamp: tencent_credentials.timestamp
         }
         await fs.writeFileSync('./.env_temp', JSON.stringify(tencent))
-        this.context.debug(
-          'The temporary key is saved successfully, and the validity period is two hours.'
-        )
         return tencent
       } catch (e) {
         throw 'Error getting temporary key: ' + e
