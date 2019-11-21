@@ -376,13 +376,20 @@ class TencentCOS extends Component {
   async remove(inputs = {}) {
     // for removal, we use state data since the user could change or delete the inputs
     // if no data found in state, we try to remove whatever is in the inputs
+    // login
+    const temp = this.context.instance.state.status
+    this.context.instance.state.status = true
     let { tencent } = this.context.credentials
     if (!tencent) {
-      tencent = await this.getTempKey(tencent)
+      tencent = await this.getTempKey(temp)
       this.context.credentials.tencent = tencent
     }
-    const appId = await this.getAppid(this.context.credentials.tencent)
-    this.context.credentials.tencent.AppId = appId.AppId
+    // get AppId
+    if (!this.context.credentials.tencent.AppId) {
+      const appId = await this.getAppid(tencent)
+      this.context.credentials.tencent.AppId = appId.AppId
+    }
+
     let bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region
 
@@ -452,16 +459,22 @@ class TencentCOS extends Component {
 			update file or dir
 		 */
 
-    this.context.status('Uploading')
+    // login
+    const temp = this.context.instance.state.status
+    this.context.instance.state.status = true
     let { tencent } = this.context.credentials
     if (!tencent) {
-      tencent = await this.getTempKey(tencent)
+      tencent = await this.getTempKey(temp)
       this.context.credentials.tencent = tencent
     }
+    // get AppId
+    if (!this.context.credentials.tencent.AppId) {
+      const appId = await this.getAppid(tencent)
+      this.context.credentials.tencent.AppId = appId.AppId
+    }
+
     const bucket = this.state.bucket || inputs.bucket
     const region = this.state.region || inputs.region || 'ap-guangzhou'
-    const appId = await this.getAppid(this.context.credentials.tencent)
-    this.context.credentials.tencent.AppId = appId.AppId
 
     if (!bucket) {
       throw Error('Unable to upload. Bucket name not found in state.')
