@@ -254,34 +254,34 @@ class TencentCOS extends Component {
     }
   }
 
-  async default(inputs = {}) {
+  async deploy(inputs = {}) {
     // Since this is a low level component, I think it's best to surface
     // all service API inputs as is to avoid confusion and enable all features of the service
 
     // login
-    const temp = this.context.instance.state.status
-    this.context.instance.state.status = true
-    let { tencent } = this.context.credentials
-    if (!tencent) {
-      tencent = await this.getTempKey(temp)
-      this.context.credentials.tencent = tencent
-    }
-    // get AppId
-    if (!this.context.credentials.tencent.AppId) {
-      const appId = await this.getAppid(this.context.credentials.tencent)
-      this.context.credentials.tencent.AppId = appId.AppId
-    }
+    // const temp = this.context.instance.state.status
+    // this.context.instance.state.status = true
+    // let { tencent } = this.context.credentials
+    // if (!tencent) {
+    //   tencent = await this.getTempKey(temp)
+    //   this.context.credentials.tencent = tencent
+    // }
+    // // get AppId
+    // if (!this.context.credentials.tencent.AppId) {
+    //   const appId = await this.getAppid(this.context.credentials.tencent)
+    //   this.context.credentials.tencent.AppId = appId.AppId
+    // }
 
-    inputs.bucket = this.confirmEnding(inputs.bucket, this.context.credentials.tencent.AppId)
+    inputs.bucket = this.confirmEnding(inputs.bucket, this.credentials.tencent.AppId)
       ? inputs.bucket
-      : inputs.bucket + '-' + this.context.credentials.tencent.AppId
+      : inputs.bucket + '-' + this.credentials.tencent.AppId
 
-    const sdk = getSdk(this.context.credentials.tencent)
+    const sdk = getSdk(this.credentials.tencent)
 
     // check if replace is required
     if (shouldReplace(inputs, this.state)) {
       // it's helpful to provide debug statements for every step of the deployment
-      this.context.debug(`"bucket" or "region" inputs changed. Replacing.`)
+      await this.debug(`"bucket" or "region" inputs changed. Replacing.`)
 
       // the first step of replacing is to remove
       // the old bucket using data in the state
@@ -290,16 +290,14 @@ class TencentCOS extends Component {
     }
 
     // Deploy the bucket
-    this.context.debug(`Deploying "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
+    await this.debug(`Deploying "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
     await deployBucket(sdk, inputs, this.state)
-    this.context.debug(
+    await this.debug(
       `"${inputs.bucket}" bucket was successfully deployed to the "${inputs.region}" region.`
     )
 
     // set bucket ACL config
-    this.context.debug(
-      `Setting ACL for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
-    )
+    await this.debug(`Setting ACL for "${inputs.bucket}" bucket in the "${inputs.region}" region.`)
 
     if (inputs.acl ? inputs.acl.permissions : undefined) {
       const params = {
@@ -316,7 +314,7 @@ class TencentCOS extends Component {
 
     // If user set Cors Rules, update the bucket with those
     if (inputs.cors) {
-      this.context.debug(
+      await this.debug(
         `Setting CORS rules for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
       )
 
@@ -330,7 +328,7 @@ class TencentCOS extends Component {
     } else {
       // otherwise, make sure the bucket doesn't have
       // any Cors rules to reflect what is defined in the config
-      this.context.debug(
+      await this.debug(
         `Ensuring no CORS are set for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
       )
       const deleteBucketCorsParams = { Bucket: inputs.bucket, Region: inputs.region }
@@ -339,7 +337,7 @@ class TencentCOS extends Component {
 
     // If the user set Tags, update the bucket with those
     if (inputs.tags) {
-      this.context.debug(
+      await this.debug(
         `Setting Tags for "${inputs.bucket}" bucket in the "${inputs.regionn}" region.`
       )
       const putBucketTaggingParams = {
@@ -351,7 +349,7 @@ class TencentCOS extends Component {
     } else {
       // otherwise, make sure the bucket doesn't have
       // any Tags to reflect what is defined in the config
-      this.context.debug(
+      await this.debug(
         `Ensuring no Tags are set for "${inputs.bucket}" bucket in the "${inputs.region}" region.`
       )
       const deleteBucketTaggingParams = { Bucket: inputs.bucket, Region: inputs.region }

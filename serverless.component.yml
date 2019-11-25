@@ -1,0 +1,9 @@
+name: tencentCos
+# version: 0.0.4
+org: eahefnawy
+author: serverless
+description: Provisions Tencent COS.
+keywords: tencent, cos, bucket
+repo: https://github.com/owner/project
+readme: ''
+license: MIT

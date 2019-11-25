@@ -13,7 +13,6 @@
   "author": "Serverless, Inc.",
   "license": "Apache",
   "dependencies": {
-    "@serverless/core": "^1.0.0",
     "cos-nodejs-sdk-v5": "^2.5.12",
     "tencentcloud-sdk-nodejs": "^3.0.87",
     "ramda": "^0.26.1",
